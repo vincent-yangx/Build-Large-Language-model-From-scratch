@@ -8,6 +8,7 @@ List 2.1 Reding in a short story as text sample into python
 import re
 import tiktoken
 
+'''
 class SimpleTokenizerV1:            # initial tokenizer, can't read unknown word
     def __init__(self, vocab):
         self.str_to_int = vocab #A
@@ -64,7 +65,20 @@ vocab = {token:integer for integer,token in enumerate(all_tokens)}
 #         break
 
 tokenizer = SimpleTokenizerV1(vocab)
-text = """"It's the last he painted, you know," Mrs. Gisburn said with pardonable pride."""
+text = '"It\'s the last he painted, you know," Mrs. Gisburn said with pardonable pride.'
 ids = tokenizer.encode(text)
 print(ids)
 print(tokenizer.decode(ids))
+'''
+
+'''
+Use of the byte pair encoding
+'''
+tokenizer = tiktoken.get_encoding("gpt2")
+
+text = "Hello, do you like tea? <|endoftext|> In the sunlit terraces of someunknownPlace."
+integers = tokenizer.encode(text, allowed_special={"<|endoftext|>"})
+print(integers)
+
+strings = tokenizer.decode(integers)
+print(strings)
