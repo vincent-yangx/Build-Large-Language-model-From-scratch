@@ -92,6 +92,7 @@ Then this explain why it can keep space and treat someunkwonPlace as a single wo
 '''
 2.6 Data sampling with a sliding window
 '''
+'''
 tokenizer = tiktoken.get_encoding("gpt2")
 with open("the-verdict.txt", "r", encoding="utf-8") as f:
     raw_text = f.read()
@@ -112,9 +113,7 @@ for i in range(1, context_size+1):
     print(context, "---->", desired)
     print(tokenizer.decode(context), "---->", tokenizer.decode([desired]))
 
-'''
 
-'''
 class GPTDatasetV1(Dataset):
     def __init__(self, txt, tokenizer, max_length, stride):
         self.tokenizer = tokenizer
@@ -139,18 +138,32 @@ max_length=256, stride=128, shuffle=True, drop_last=True):
     dataset, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last) #C
     return dataloader
 
-'''
+
 dataloader = create_dataloader_v1(
     raw_text, batch_size=1, max_length=4, stride=1, shuffle=False)
 data_iter = iter(dataloader) #A     # create an iterator from the DataLoader
 first_batch = next(data_iter)
 print(first_batch)
-'''
+
 # Based on the definition of GPTDatasetV1, we shift input one position rightwards, and we get target,
 # since its task is to predict the next word. Max_length is the length of input window, and stride is
 # how many position to shift for the input window
+
 dataloader = create_dataloader_v1(raw_text, batch_size=3, max_length=4, stride=2)
 data_iter = iter(dataloader)
 inputs, targets = next(data_iter)
 print("Inputs:\n", inputs)
 print("\nTargets:\n", targets)
+'''
+
+'''
+2.7 Creating token embeddings (Just initialize, haven't updated yet)
+'''
+input_ids = torch.tensor([2, 3, 5, 1])
+vocab_size = 6
+output_dim = 3
+torch.manual_seed(123)
+embedding_layer = torch.nn.Embedding(vocab_size, output_dim)
+print(embedding_layer.weight)       # get the overall weight for each token id from 0 to 5
+print(embedding_layer(torch.tensor([3])))   # get specific weight for token 3
+print(embedding_layer(input_ids))   # get the overall weight for input_ids
