@@ -92,7 +92,7 @@ Then this explain why it can keep space and treat someunkwonPlace as a single wo
 '''
 2.6 Data sampling with a sliding window
 '''
-'''
+
 tokenizer = tiktoken.get_encoding("gpt2")
 with open("the-verdict.txt", "r", encoding="utf-8") as f:
     raw_text = f.read()
@@ -154,10 +154,12 @@ data_iter = iter(dataloader)
 inputs, targets = next(data_iter)
 print("Inputs:\n", inputs)
 print("\nTargets:\n", targets)
-'''
+
 
 '''
-2.7 Creating token embeddings (Just initialize, haven't updated yet)
+2.7 Creating token embeddings (Just initialize, haven't updated yet, no position info included)
+'''
+
 '''
 input_ids = torch.tensor([2, 3, 5, 1])
 vocab_size = 6
@@ -167,3 +169,29 @@ embedding_layer = torch.nn.Embedding(vocab_size, output_dim)
 print(embedding_layer.weight)       # get the overall weight for each token id from 0 to 5
 print(embedding_layer(torch.tensor([3])))   # get specific weight for token 3
 print(embedding_layer(input_ids))   # get the overall weight for input_ids
+'''
+
+'''
+2.8 Encoding word positions (I can't find how the positions are used here)
+'''
+output_dim = 256
+vocab_size = 50257
+token_embedding_layer = torch.nn.Embedding(vocab_size, output_dim)
+max_length = 4
+dataloader = create_dataloader_v1(
+raw_text, batch_size=8, max_length=max_length, stride=max_length, shuffle=False)
+data_iter = iter(dataloader)
+inputs, targets = next(data_iter)
+print("Token IDs:\n", inputs)
+print("\nInputs shape:\n", inputs.shape)
+
+token_embeddings = token_embedding_layer(inputs)
+print(token_embeddings.shape)
+
+context_length = max_length
+pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
+pos_embeddings = pos_embedding_layer(torch.arange(context_length))
+print(pos_embeddings.shape)
+
+input_embeddings = token_embeddings + pos_embeddings    # automatically add to each tensor in batch
+print(input_embeddings.shape)
