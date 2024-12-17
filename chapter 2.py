@@ -172,7 +172,8 @@ print(embedding_layer(input_ids))   # get the overall weight for input_ids
 '''
 
 '''
-2.8 Encoding word positions (I can't find how the positions are used here)
+2.8 Encoding word positions (*I can't find how the positions are used here, position info is used here
+as pos_embedding represents the position)
 '''
 output_dim = 256
 vocab_size = 50257
